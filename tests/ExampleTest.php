@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace RyanChandler\BladeCacheDirective\Tests;
 
 class ExampleTest extends TestCase
 {

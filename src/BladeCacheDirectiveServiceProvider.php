@@ -5,7 +5,6 @@ namespace RyanChandler\BladeCacheDirective;
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use RyanChandler\BladeCacheDirective\Commands\BladeCacheDirectiveCommand;
 
 class BladeCacheDirectiveServiceProvider extends PackageServiceProvider
 {

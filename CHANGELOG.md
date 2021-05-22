@@ -2,6 +2,6 @@
 
 All notable changes to `blade-cache-directive` will be documented in this file.
 
-## 1.0.0 - 202X-XX-XX
+## 0.1.0 - 2021-05-22
 
-- initial release
+- Initial release. 🎉

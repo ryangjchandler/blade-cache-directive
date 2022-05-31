@@ -2,6 +2,6 @@
 
 return [
 
-    'ttl' => 3_600,
+    'ttl' => env('BLADE_CACHE_DIRECTIVE_TTL', 3600),
 
 ];

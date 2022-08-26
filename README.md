@@ -25,7 +25,7 @@ This is the contents of the published config file:
 ```php
 return [
 
-    'ttl' => 3_600,
+    'ttl' => env('BLADE_CACHE_DIRECTIVE_TTL', 3600),
 
 ];
 ```

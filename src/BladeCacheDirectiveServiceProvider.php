@@ -28,7 +28,7 @@ class BladeCacheDirectiveServiceProvider extends PackageServiceProvider
                     \$__cache_directive_ttl = config('blade-cache-directive.ttl');
                 }
 
-                if (\Illuminate\Support\Facades\Cache::has(\$__cache_directive_key)) {
+                if (config('blade-cache-directive.enabled') && \Illuminate\Support\Facades\Cache::has(\$__cache_directive_key)) {
                     echo \Illuminate\Support\Facades\Cache::get(\$__cache_directive_key);
                 } else {
                     \$__cache_directive_buffering = true;

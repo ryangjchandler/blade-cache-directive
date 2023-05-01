@@ -52,6 +52,12 @@ If you want to cache the content for a particular model, i.e. a `User` model, yo
 
 When a new user is passed to this view, a separate cache entry will be created.
 
+### Disabling caching
+
+If you wish to disable caching when using the `@cache` directive (useful for local development and testing), you can set the `BLADE_CACHE_DIRECTIVE_ENABLED` environment variable to `false`.
+
+Alternatively, publish the configuration file and modify the `enabled` entry accordingly.
+
 ## Testing
 
 ```bash

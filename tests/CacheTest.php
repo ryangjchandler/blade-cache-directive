@@ -2,7 +2,8 @@
 
 namespace RyanChandler\BladeCacheDirective\Tests;
 
-use Artisan;
+use Illuminate\Support\Facades\Artisan;
+use Carbon\Carbon;
 
 class CacheTest extends TestCase
 {
@@ -18,7 +19,7 @@ class CacheTest extends TestCase
         $this->second_value = now()->subDays(20);
         $this->third_value = now()->subDays(60);
     }
-    
+
     /** @test */
     public function the_cache_directive_will_render_the_same_view_before_ttl_expired()
     {
@@ -41,7 +42,21 @@ class CacheTest extends TestCase
         $this->assertEquals($this->second_value->format('Y-m-d H:i:s'), $this->renderView('cache', compact('time')));
     }
 
-    protected function renderView($view, $parameters)
+    /** @test */
+    public function the_cache_directive_can_be_disabled()
+    {
+        config()->set('blade-cache-directive.enabled', false);
+
+        $first = $this->renderView('disabled');
+
+        Carbon::setTestNow(now()->addMinute());
+
+        $second = $this->renderView('disabled');
+
+        $this->assertNotEquals($first, $second);
+    }
+
+    protected function renderView($view, $parameters = [])
     {
         Artisan::call('view:clear');
 

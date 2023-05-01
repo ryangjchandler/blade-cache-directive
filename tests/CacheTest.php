@@ -2,8 +2,8 @@
 
 namespace RyanChandler\BladeCacheDirective\Tests;
 
-use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 
 class CacheTest extends TestCase
 {

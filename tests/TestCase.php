@@ -27,12 +27,13 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('cache.default', 'file');
 
         /*
         include_once __DIR__.'/../database/migrations/create_blade-cache-directive_table.php.stub';
         (new \CreatePackageTable())->up();
         */
-        
+
         $app['config']->set('view.paths', [__DIR__ . '/resources/views']);
     }
 }

@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Artisan;
 class CacheTest extends TestCase
 {
     protected $first_value;
+
     protected $second_value;
+
     protected $third_value;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

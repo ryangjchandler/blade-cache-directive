@@ -8,7 +8,7 @@ use RyanChandler\BladeCacheDirective\BladeCacheDirectiveServiceProvider;
 
 class TestCase extends Orchestra
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -34,6 +34,6 @@ class TestCase extends Orchestra
         (new \CreatePackageTable())->up();
         */
 
-        $app['config']->set('view.paths', [__DIR__ . '/resources/views']);
+        $app['config']->set('view.paths', [__DIR__.'/resources/views']);
     }
 }

@@ -42,6 +42,39 @@ This package adds a new `@cache` Blade directive. It accepts 2 arguments - the c
 
 When used inside of a Blade template, the content between the 2 directives will be cached using Laravel's application cache. If a TTL (in seconds) isn't provided, the default TTL of **1 hour** will be used instead.
 
+### Forever caching
+
+If you want to cache content indefinitely, you may use the forever keyword
+as the second argument.
+
+```blade
+@cache('homepage', 'forever')
+    {{ now() }}
+@endcache
+```
+This will store the cached content using Laravel's forever() method.
+
+### Cache tags
+
+If your cache store supports tags (e.g. Redis or Memcached), you may pass
+an array of tags as the third argument.
+
+```blade
+@cache('posts_list', 60, ['posts', 'homepage'])
+    @foreach ($posts as $post)
+        {{ $post->title }}
+    @endforeach
+@endcache
+```
+
+You may then invalidate all related cache entries using:
+
+```php
+Cache::tags(['posts'])->flush();
+```
+
+### Dynamic cache keys
+
 If you want to cache the content for a particular model, i.e. a `User` model, you can use string interpolation to change the key.
 
 ```blade

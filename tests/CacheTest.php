@@ -4,6 +4,7 @@ namespace RyanChandler\BladeCacheDirective\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 
 class CacheTest extends TestCase
@@ -46,6 +47,46 @@ class CacheTest extends TestCase
     }
 
     #[Test]
+    public function the_cache_directive_can_be_cached_forever(): void
+    {
+        Cache::flush();
+
+        $time = $this->first_value;
+
+        $first = $this->renderView('cache-forever', compact('time'));
+
+        Carbon::setTestNow(now()->addYears(5));
+
+        $time = $this->second_value;
+
+        $second = $this->renderView('cache-forever', compact('time'));
+
+        $this->assertEquals($first, $second);
+    }
+
+    #[Test]
+    public function the_cache_directive_supports_cache_tags(): void
+    {
+        if (! Cache::supportsTags()) {
+            $this->markTestSkipped('Cache store does not support tags.');
+        }
+
+        Cache::flush();
+
+        $time = $this->first_value;
+
+        $first = $this->renderView('cache-tags', compact('time'));
+
+        Cache::tags(['blade-cache-test'])->flush();
+
+        $time = $this->second_value;
+
+        $second = $this->renderView('cache-tags', compact('time'));
+
+        $this->assertNotEquals($first, $second);
+    }
+
+    #[Test]
     public function the_cache_directive_can_be_disabled()
     {
         config()->set('blade-cache-directive.enabled', false);
@@ -59,6 +100,28 @@ class CacheTest extends TestCase
         $this->assertNotEquals($first, $second);
     }
 
+    #[Test]
+    public function the_cache_directive_uses_default_ttl_when_null_is_provided(): void
+    {
+        Cache::flush();
+
+        // On force un TTL très court pour le test
+        config()->set('blade-cache-directive.ttl', 1);
+
+        $time = $this->first_value;
+
+        $first = $this->renderView('cache-null-ttl', compact('time'));
+
+        // On attend que le TTL par défaut expire
+        sleep(2);
+
+        $time = $this->second_value;
+
+        $second = $this->renderView('cache-null-ttl', compact('time'));
+
+        $this->assertNotEquals($first, $second);
+    }
+    
     protected function renderView($view, $parameters = [])
     {
         Artisan::call('view:clear');

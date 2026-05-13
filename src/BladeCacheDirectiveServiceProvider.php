@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RyanChandler\BladeCacheDirective;
 
 use Illuminate\Support\Facades\Blade;
@@ -21,18 +23,30 @@ class BladeCacheDirectiveServiceProvider extends PackageServiceProvider
             return "<?php
                 \$__cache_directive_arguments = [{$expression}];
 
-                if (count(\$__cache_directive_arguments) === 2) {
-                    [\$__cache_directive_key, \$__cache_directive_ttl] = \$__cache_directive_arguments;
+                \$__cache_directive_key = \$__cache_directive_arguments[0];
+               
+                if (isset(\$__cache_directive_arguments[1])) {
+                  \$__cache_directive_ttl = \$__cache_directive_arguments[1];
                 } else {
-                    [\$__cache_directive_key] = \$__cache_directive_arguments;
-                    \$__cache_directive_ttl = config('blade-cache-directive.ttl');
+                  \$__cache_directive_ttl = config('blade-cache-directive.ttl');
                 }
 
-                if (config('blade-cache-directive.enabled') && \Illuminate\Support\Facades\Cache::has(\$__cache_directive_key)) {
-                    echo \Illuminate\Support\Facades\Cache::get(\$__cache_directive_key);
+                if (isset(\$__cache_directive_arguments[2])) {
+                    \$__cache_directive_tags = (array) \$__cache_directive_arguments[2];
                 } else {
-                    \$__cache_directive_buffering = true;
+                    \$__cache_directive_tags = [];
+                }
 
+                \$__cache_store = empty(\$__cache_directive_tags)
+                    ? \Illuminate\Support\Facades\Cache::store()
+                    : \Illuminate\Support\Facades\Cache::tags(\$__cache_directive_tags);
+                
+                if (
+                    config('blade-cache-directive.enabled') &&
+                    \$__cache_store->has(\$__cache_directive_key)
+                ) {
+                    echo \$__cache_store->get(\$__cache_directive_key);
+                } else {
                     ob_start();
             ?>";
         });
@@ -41,11 +55,29 @@ class BladeCacheDirectiveServiceProvider extends PackageServiceProvider
             return "<?php
                     \$__cache_directive_buffer = ob_get_clean();
 
-                    \Illuminate\Support\Facades\Cache::put(\$__cache_directive_key, \$__cache_directive_buffer, \$__cache_directive_ttl);
+                    if (\$__cache_directive_ttl === 'forever') {
+                        \$__cache_store->forever(
+                            \$__cache_directive_key,
+                            \$__cache_directive_buffer
+                        );
+                    } else {
+                        \$__cache_store->put(
+                            \$__cache_directive_key,
+                            \$__cache_directive_buffer,
+                            \$__cache_directive_ttl
+                        );
+                    }
 
                     echo \$__cache_directive_buffer;
 
-                    unset(\$__cache_directive_key, \$__cache_directive_ttl, \$__cache_directive_buffer, \$__cache_directive_buffering, \$__cache_directive_arguments);
+                    unset(
+                        \$__cache_directive_key,
+                        \$__cache_directive_ttl,
+                        \$__cache_directive_tags,
+                        \$__cache_directive_buffer,
+                        \$__cache_store,
+                        \$__cache_directive_arguments
+                    );
                 }
             ?>";
         });
